@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/youtube.css' rel='stylesheet'>
+    <title>Product Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #searchResults {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #searchResults div {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        /* CSS styles for product cards */
+        .product-card {
+            border: 2px solid #db0000;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 100px;
+            padding: 10px;
+            width: 300px;
+            margin: 10px auto;
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .product-card a {
+            color: #00ff2a;
+            text-decoration: none;
+            padding: 6px 30px;
+            background-color: #333;
+            border-radius: 12px;
+        }
+
+        .pk {
+            color: #00ff2a;
+        }
+
+        .title {
+            text-align: left;
+            color: #007bff;
+        }
+        #fetchProductsBtn{
+            background-color: #db0000;
+            width: 300px;
+        }
+        footer{
+            text-align: center;
+            margin-top: 70px;
+            background-color: #1b1616;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+  <h1>i1Shopping Zone</h1>
+    <form id="searchForm">
+        <label for="productName">Product Name:</label>
+        <br><br>
+        <input type="text" id="productName" name="productName" placeholder="Enter Your Product Name">
+        <button type="submit">Search</button>
+    </form>
+    <div id="searchResults" oncontextmenu="return false"></div>
+    <center>
+    <button id="fetchProductsBtn">Fetch All Products</button>
+    </center>
+    <div class="social">
+        <h3 style="text-align: center;">|--Join Social Media --|</h3>
+        <center>
+        <img src="https://cdn-icons-png.flaticon.com/128/2111/2111646.png" alt="" style="width: 35px; height:35px">
+        <img src="https://cdn-icons-png.flaticon.com/128/5968/5968764.png" alt="" style="width: 35px; height:35px">
+        <img src="https://cdn-icons-png.flaticon.com/128/10453/10453141.png" alt="" style="width: 35px; height:35px">
+        <img src="https://cdn-icons-png.flaticon.com/128/3670/3670147.png" alt="" style="width: 35px; height:35px">
+        </center>
+    </div>
+    <footer>
+        All CopyRights are reserved i1Shopping Zone &copy;2024
+    </footer>
+
+    <script>
+        // Function to fetch and display product names
+        function fetchProducts() {
+            fetch('https://sheetdb.io/api/v1/si4jtdt903suv')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.length > 0) {
+                    var productNames = data.map(product => product.productName);
+                    document.getElementById('searchResults').innerHTML = '<p>All Products:</p><ul><li>' + productNames.join('</li><li>') + '</li></ul>';
+                } else {
+                    document.getElementById('searchResults').innerHTML = '<p>No products found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('searchResults').innerHTML = '<p>An error occurred while fetching data.</p>';
+            });
+        }
+
+        // Event listener to trigger fetchProducts function when the button is clicked
+        document.getElementById('fetchProductsBtn').addEventListener('click', fetchProducts);
+
+        // Event listener to trigger search functionality when submitting the form
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var productName = document.getElementById('productName').value; // Get product name from input field
+            fetch('https://sheetdb.io/api/v1/si4jtdt903suv?productName=' + productName)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.length > 0) {
+                    var productsHtml = ''; // Initialize an empty string to store HTML for products
+                    data.forEach(function(product) {
+                        // Check if the product name matches the searched name
+                        if (product.productName.toLowerCase() === productName.toLowerCase()) {
+                            // Create HTML for the matching product and append it to productsHtml
+                            productsHtml += '<div class="product-card">';
+                            productsHtml += '<img src="' + (product.img || 'placeholder.jpg') + '" alt="' + (product.productName || 'N/A') + '"><br>';
+                            productsHtml += '<p><strong><font class="title">Product Name:</font></strong> ' + (product.productName || 'N/A')+ '</p><br>';
+                            productsHtml += '<p><strong><font class="title">Price:</font></strong> ' + (product.price || 'N/A') + '</p><br>';
+                            productsHtml += '<p><strong><font class="title">Discount:</font></strong> ' + (product.discount || 'N/A') + '</p><br>';
+                            productsHtml += '<p><strong><font class="title">Link:</font></strong> <a href="' + (product.links || '#') + '">Order Now</a></p><br>';
+                            productsHtml += '</div>';
+                        }
+                    });
+                    if (productsHtml !== '') {
+                        // Display the HTML for products in the searchResults div
+                        document.getElementById('searchResults').innerHTML = productsHtml;
+                    } else {
+                        // Display "Not found" message
+                        document.getElementById('searchResults').innerHTML = '<p>No product found with the name: ' + productName + '</p>';
+                    }
+                } else {
+                    // Display "Not found" message
+                    document.getElementById('searchResults').innerHTML = '<p>No product found with the name: ' + productName + '</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Display error message
+                document.getElementById('searchResults').innerHTML = '<p>An error occurred while fetching data.</p>';
+            });
+        });
+    </script>
+
+</body>
+</html>
